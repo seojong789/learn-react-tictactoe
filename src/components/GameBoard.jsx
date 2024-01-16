@@ -43,10 +43,15 @@ const GameBoard = ({ onSelectSquare, turns }) => {
           <ol>
             {row.map((col, colIndex) => (
               <li key={colIndex}>
+                {/* 단순히 disabled 옵션만 추가하면 버튼 비활성화. -> 이미 누른 버튼에 대해서만 disabled=True를 적용해야 함. */}
                 <button
                   onClick={() => {
                     onSelectSquare(rowIndex, colIndex);
                   }}
+                  disabled={
+                    // gameBoard[rowIndex][colIndex] === null ? false : true
+                    col === null ? false : true // col은 gameBoard[rowIndex][colIndex]에 해당하는 값임. 해당 값이 null이면 disabled=false이므로 선택가능.
+                  }
                 >
                   {col}
                 </button>
