@@ -3,22 +3,39 @@ import Player from './components/Player';
 import GameBoard from './components/GameBoard';
 import Log from './components/Log';
 
+// helper function
+const deriveActivePlayer = (gameTurns) => {
+  let currentPlayer = 'X';
+
+  // App의 currentPlayer의 값은 밑의 setGameTurns의 currentPlayer와 다르게 이전 prev state의 값에 의존하지 않는다.
+  // 따라서 현재의 값(gameTurns)의 코드로 변경해줌.
+  if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
+    currentPlayer = 'O';
+  }
+
+  return currentPlayer;
+};
+
 const App = () => {
   // 아래 코드는 플레이어 2명에서 'X"와 'O'를 번갈아가면서 진행하기 때문에 이를 처리하기 위함.
   // 여러 컴포넌트에 prop으로 전달하기 용이하기 위해 App.js(부모)에서 처리하는 것.
-  const [activePlayer, setActivePlayer] = useState('X');
   const [gameTurns, setGameTurns] = useState([]); // Log 컴포넌트에서 사용되는 동적배열. (각 플레이어의 동작을 보관함)
+  // const [activePlayer, setActivePlayer] = useState('X'); // 해당 state도 간소화 가능 -> gameTurns state만 사용하자.
+  const activePlayer = deriveActivePlayer(gameTurns);
 
   const handleSelectSquare = (rowIndex, colIndex) => {
     // rowIndex, colIndex : Log에 저장될 내용은 여러 개가 있는데 그중, 어떤 버튼에 눌렸는지 확인하기 위한 프로퍼티
-    setActivePlayer((curActivePlayer) => (curActivePlayer === 'X' ? 'O' : 'X'));
+    // setActivePlayer((curActivePlayer) => (curActivePlayer === 'X' ? 'O' : 'X')); // state 간소화를 위해 제거.
     setGameTurns((prevTurns) => {
-      let currentPlayer = 'X'; // activePlayer의 값은 믿지 못하기 때문에, 항상 최신 값으로 보장하기 위해 새로운 변수 생성.
-      if (prevTurns.length > 0 && prevTurns[0].player === 'X') {
-        // prevTurns.length의 값이 0보다 커야하는 이유 : 초기에는 빈배열로 시작하기 때문.
-        // prevTurns[0]의 값 = 가장 최신의 행동.
-        currentPlayer = 'O'; // 이전 행동이 'X'라면, 현재 행동은 'O'라는 의미.
-      }
+      // let currentPlayer = 'X'; // activePlayer의 값은 믿지 못하기 때문에, 항상 최신 값으로 보장하기 위해 새로운 변수 생성.
+      // if (prevTurns.length > 0 && prevTurns[0].player === 'X') {
+      //   // prevTurns.length의 값이 0보다 커야하는 이유 : 초기에는 빈배열로 시작하기 때문.
+      //   // prevTurns[0]의 값 = 가장 최신의 행동.
+      //   currentPlayer = 'O'; // 이전 행동이 'X'라면, 현재 행동은 'O'라는 의미.
+      // }
+
+      // 위의 코드를 아래 코드로 대체함 : 이때! 주의사항으로 gameTurns가 아니라 이전 상태기반이므로 prevTurns를 프로퍼티로 보내야함.
+      const currentPlayer = deriveActivePlayer(prevTurns);
 
       const updatedTurns = [
         // player: activePlayer, // activePlayer 상태가 존재하는데, 굳이 새로 변수를 만들어서 저장하는 이유 : 해당 위치의 코드는 gameTurns의 상태를 업데이트하면서 항상 최신상태를 보장하고 있는데, activePlayer의 경우에는 다른 상태이다. 이때, activePlayer의 값을 항상 최신 값이라고 보장할 수 없기 때문.
