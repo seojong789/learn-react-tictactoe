@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Player = ({ initialName, symbol, isActive }) => {
+const Player = ({ initialName, symbol, isActive, onChangeName }) => {
   const [playerName, setPlayerName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
   let editablePlayerName = <span className="player-name">{playerName}</span>;
@@ -10,6 +10,10 @@ const Player = ({ initialName, symbol, isActive }) => {
     // 이전 상태를 기반하여 상태의 값을 변경할 경우, 함수의 형태로 사용해야 함.
     // setIsEditing(!isEditing);
     setIsEditing((prevIsEditing) => !prevIsEditing); // 항상 상태의 최신 값을 보장함.
+
+    if (isEditing) {
+      onChangeName(symbol, playerName);
+    }
   };
 
   const handleChange = (event) => {

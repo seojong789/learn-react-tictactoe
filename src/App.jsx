@@ -49,6 +49,13 @@ const App = () => {
 
   let winner;
 
+  // GameBoard Component에 Player Component의 Player 이름을 넘겨줘야 해.
+  // save 버튼을 누를 때, 해당 플레이어의 이름을 players state에 저장하도록 함.
+  const [players, setPlayers] = useState({
+    X: 'Player 1',
+    O: 'Player 2',
+  });
+
   // const [hasWinner, setHasWinner] = useState(false); // handleSelectSquare에서 우승 조건을 만족하면 true로 값을 변경 -> 그러나, gameTurns에서 파생될 수 있으므로 추가 state 필요 x
   for (const combination of WINNING_COMBINATIONS) {
     const firstSquareSymbol =
@@ -65,7 +72,8 @@ const App = () => {
       firstSquareSymbol === secondSquareSymbol &&
       firstSquareSymbol === thirdSquareSymbol
     ) {
-      winner = firstSquareSymbol; // first, second, third 모두 같은 symbol이므로 아무거나 symbol 값을 가져오면 돼.
+      // winner = firstSquareSymbol; // first, second, third 모두 같은 symbol이므로 아무거나 symbol 값을 가져오면 돼.
+      winner = players[firstSquareSymbol]; // players의 속성에는 X, O가 있는데 firstSquaresSymbol의 경우 이긴 사람의 심볼이므로 해당 속성에 부합함.
     }
   }
 
@@ -102,7 +110,16 @@ const App = () => {
   const handleRestart = () => {
     setGameTurns([]); // tictactoe의 모든 값은 gameTurns 상태에서 파생되기 때문에, 해당 값만 초기화 시키면 Rematch 가능!
     gameBoard = initialGameBoard;
-    console.log(gameTurns);
+    // console.log(gameTurns);
+  };
+
+  const handlePlayerNameChange = (symbol, newName) => {
+    setPlayers((prevPlayers) => {
+      return {
+        ...prevPlayers,
+        [symbol]: newName,
+      };
+    });
   };
 
   return (
@@ -114,12 +131,14 @@ const App = () => {
             initialName="Player 1"
             symbol="X"
             isActive={activePlayer === 'X'}
+            onChangeName={handlePlayerNameChange}
           />
           {/* Player 1의 차례가 끝나면, activePlayer의 값이 'O'로 변경되기 때문에, Player 2에 하이라이트 표시가 된다. */}
           <Player
             initialName="Player 2"
             symbol="O"
             isActive={activePlayer === 'O'}
+            onChangeName={handlePlayerNameChange}
           />
         </ol>
         {/* 우승자 존재 or 무승부일 경우에 GameOver 컴포넌트 보여줌 */}
